@@ -7,10 +7,13 @@ all: examples
 
 evm: all example-evm-plugins evmexample-cli
 
-examples: example-plugins example-plugins-external example-cli
+examples: example-plugins example-plugins-external example-cli blueprint-cli
 
 example-cli: proto
 	go build -o $@ $(PKG)/examples/cli
+
+blueprint-cli: proto
+	go build -o $@ $(PKG)/cli/blueprint
 
 evmexample-cli: proto
 	go build -tags "evm" -o $@ $(PKG)/examples/plugins/evmexample/cli
