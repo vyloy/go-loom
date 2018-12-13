@@ -3,11 +3,10 @@
 package crypto
 
 import (
-	"crypto/sha256"
 	"os"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	"golang.org/x/crypto/ed25519"
 )
 
 func TestGenYubiSecp256k1Key(t *testing.T) {
@@ -46,14 +45,12 @@ func TestSignYubiSecp256k1(t *testing.T) {
 	t.Logf("LoadYubiHsmPrivKey succeeded")
 
 	testMsg := []byte{'t', 'e', 's', 't'}
-	hash := sha256.Sum256(testMsg)
-	sig, err := YubiHsmSign(hash[:], yubiPrivKey)
+	sig, err := YubiHsmSign(testMsg, yubiPrivKey)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Logf("Hash length is %d", len(hash))
-	if !secp256k1.VerifySignature(yubiPrivKey.pubKeyBytes[:], hash[:], sig) {
+	if !ed25519.Verify(yubiPrivKey.pubKeyBytes[:], testMsg, sig) {
 		t.Fatalf("Verification of signature has failed")
 	}
 
